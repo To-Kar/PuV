@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  postgresdb:
+    image: postgres:14.19
+    container_name: todopsql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - todonet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot Backend
+  starterapp:
+    image: starterapp:v1
+    container_name: todo-backend
+    build:
+      context: ./starterapp
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://todopsql:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: mysecretpassword
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+    networks:
+      - todonet
+
+  # Vue Frontend
+  frontend:
+    image: todo-frontend:v1
+    container_name: todo-frontend
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - starterapp
+    networks:
+      - todonet
+
+networks:
+  todonet:
+    name: todonet
+
+volumes:
+  postgres_data:
