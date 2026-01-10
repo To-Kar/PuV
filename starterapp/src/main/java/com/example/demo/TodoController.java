@@ -68,12 +68,12 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TodoItem> updateTodo(@PathVariable Long id,@RequestBody String title, @RequestBody String description, @RequestBody boolean isCompleted) {
+    public ResponseEntity<TodoItem> updateTodo(@PathVariable Long id, @RequestBody TodoItem todoDetails) {
 
         var existingTodo = service.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        existingTodo.setTitle(title);
-        existingTodo.setDescription(description);
-        existingTodo.setCompleted(isCompleted);
+        existingTodo.setTitle(todoDetails.getTitle());
+        existingTodo.setDescription(todoDetails.getDescription());
+        existingTodo.setCompleted(todoDetails.isCompleted());
 
         return ResponseEntity.ok(service.save(existingTodo));
 
