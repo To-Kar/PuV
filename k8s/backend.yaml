@@ -37,21 +37,6 @@ spec:
                 secretKeyRef:
                   name: backend-secret
                   key: SPRING_DATASOURCE_PASSWORD
-
-          # Probes nur aktivieren, wenn du einen Health-Endpoint hast (Actuator o.ä.)
-          # Wenn du KEIN /actuator/health hast, lass diese Probes erstmal aus.
-          # readinessProbe:
-          #   httpGet:
-          #     path: /actuator/health
-          #     port: 8080
-          #   initialDelaySeconds: 10
-          #   periodSeconds: 5
-          # livenessProbe:
-          #   httpGet:
-          #     path: /actuator/health
-          #     port: 8080
-          #   initialDelaySeconds: 30
-          #   periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
